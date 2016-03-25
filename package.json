@@ -1,0 +1,29 @@
+{
+  "name": "passport-google-idtoken",
+  "version": "1.0.0",
+  "description": "Passport Strategy that uses a Google id_token and validates against Google's tokeninfo endpoint.",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AgencyPMG/passport-google-idtoken.git"
+  },
+  "keywords": [
+    "Passport",
+    "Strategy",
+    "Google",
+    "TokenInfo"
+  ],
+  "author": "tech@pmg.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AgencyPMG/passport-google-idtoken/issues"
+  },
+  "homepage": "https://github.com/AgencyPMG/passport-google-idtoken",
+  "dependencies": {
+    "passport": "^0.3.2",
+    "underscore": "^1.8.3"
+  }
+}
