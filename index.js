@@ -38,6 +38,7 @@ var GoogleIdTokenStrategy = function(options, verify) {
     //this is the name that will need to be used in client code.
     this.name = 'google-idtoken';
 
+    options = _.extend({}, options);
     this.tokenParamName = options.tokenParamName || 'id_token';
     this.tokenInfoUrl = options.tokenInfoUrl || 'https://www.googleapis.com/oauth2/v3/tokeninfo';
     this.verify = verify;

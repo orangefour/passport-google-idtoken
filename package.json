@@ -4,7 +4,8 @@
   "description": "Passport Strategy that uses a Google id_token and validates against Google's tokeninfo endpoint.",
   "main": "index.js",
   "scripts": {
-    "test": "test"
+    "test": "mocha test",
+    "test-ci": "istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- test && coveralls < ./coverage/lcov.info && rm -rf ./coverage"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,11 @@
   "dependencies": {
     "passport": "^0.3.2",
     "underscore": "^1.8.3"
+  },
+  "devDependencies": {
+    "coveralls": "^2.11.9",
+    "istanbul": "^0.4.2",
+    "mocha": "^2.4.5",
+    "mocha-lcov-reporter": "^1.2.0"
   }
 }
