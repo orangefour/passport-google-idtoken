@@ -53,14 +53,14 @@ util.inherits(GoogleIdTokenStrategy, Strategy);
 GoogleIdTokenStrategy.prototype.authenticate = function(req, options) {
     var idToken = this.paramFromRequest(req, this.tokenParamName);
     if (!idToken) {
-        return done('parameter ' + this.tokenParamName + ' is not present in req');
+        return this.done('parameter ' + this.tokenParamName + ' is not present in req');
     }
-    this.validateIdToken(idToken, function(error, profile) {
+    this.validateIdToken(idToken, _.bind(function(error, profile) {
         if (error) {
-            return done(error);
+            return this.done(error);
         }
-        return self.verify(profile, done);
-    });
+        return this.verify(profile, _.bind(this.done, this));
+    }, this));
 }
 
 /**
@@ -101,9 +101,11 @@ GoogleIdTokenStrategy.prototype.paramFromRequest = function(req, name) {
  * Validates that idToken is valid by getting token info from the token info endpoint from Google.
  * @param idToken {string} the id token from a Google client.
  * @param callback {function} profile object callback.
+ * @param poster {function, optional for testing}.
  */
-GoogleIdTokenStrategy.prototype.validateIdToken = function(idToken, callback) {
-    request.post({
+GoogleIdTokenStrategy.prototype.validateIdToken = function(idToken, callback, poster) {
+    poster = poster || request;
+    poster.post({
         url: this.tokenInfoUrl,
         form: {
             id_token: idToken
@@ -116,7 +118,7 @@ GoogleIdTokenStrategy.prototype.validateIdToken = function(idToken, callback) {
         try {
             profile = this.makeProfile(JSON.parse(body));
         } catch (e) {
-            callback('Could not parse response: ' + body);
+            return callback('Could not parse response: ' + body);
         }
         if (!(profile.exp && profile.email)) {
             return callback('profile.exp and profile.email must be defined in token info response');
@@ -152,8 +154,8 @@ GoogleIdTokenStrategy.prototype.makeProfile = function(response) {
         locale: response.locale
     };
     //multiply by 1000 here because Google returns number of seconds and we need millseconds for Date.
-    result.iat = new Date(1000 * parseInt(response.iat));
-    result.exp = new Date(1000 * parseInt(response.exp));
+    result.iat = !!result.iat ? new Date(1000 * parseInt(result.iat)) : undefined;
+    result.exp = !!result.exp ? new Date(1000 * parseInt(result.exp)) : undefined;
     return result;
 }
 
