@@ -5,7 +5,107 @@ An npm Passport Strategy that uses a Google id_token and validates against Googl
 [![Build Status](https://travis-ci.org/AgencyPMG/passport-google-idtoken.svg?branch=master)](https://travis-ci.org/AgencyPMG/passport-google-idtoken)
 [![Coverage Status](https://coveralls.io/repos/github/AgencyPMG/passport-google-idtoken/badge.svg?branch=master)](https://coveralls.io/github/AgencyPMG/passport-google-idtoken?branch=master)
 
-### Examples and Usage
+### Install
+```bash
+$ npm install passport-google-idtoken --save
+```
+
+### Usage
+The following shows a simple example as to how to use the strategy. All that needs
+to be done in the client code is implement the finding and returning of the user
+with the given information in `profile`.
+
+#### Configure the Strategy
+```node
+var GoogleIdTokenStrategy = require('passport-google-idtoken');
+var passport = require('passport');
+
+passport.use(
+    new GoogleIdTokenStrategy(
+
+        {}, //use the default configuration. this should be perfectly usable.
+
+        //this is the function that verifies the found profile.
+        //see below for specifics on the parameters.
+        function(profile, callback) {
+
+            //validate profile.aud.
+            //validate profile.hd if it is there and you want to.
+
+            //find the user with profile.email.
+            //var user = find the user somehow.
+
+            //if could not find user, then callback('could not find user error');
+
+            //otherwise callback(null, user);
+        }
+    )
+);
+```
+
+#### Authenticate Requests
+```node
+app.post('/auth/google', function(req, res) {
+    //The req must have a req.body or req.query field with the name as that
+    //supplied to new GoogleIdTokenStrategy.
+    //default is 'id_token'.
+
+    return passport.authenticate('google-idtoken')(req, res, _.bind(function(error) {
+        if (error) {
+            //error handling.
+            return;
+        }
+        //success handling.
+    }, this));
+});
+```
+
+#### Frontend Example
+Please see here for the Google documentation on using the new Google Sign In button:
+https://developers.google.com/identity/sign-in/web/sign-in
+
+Following is a simple example to render the sign in button and listen for user changes
+in the browser.
+```js
+$(document).ready(function() {
+    window.gapi.load('auth2', function() {
+        var googleAuth = window.gapi.auth2.init();
+        googleAuth.currentUser.listen(function(googleUser) {
+            if (!googleUser.isSignedIn()) {
+                return;
+            }
+
+            //optional check here to see if the button has been clicked.
+            //the user will be signed in automatically and this function will be
+            //called by the Google library unless you have forced a sign out.
+
+            $.ajax({
+                type: 'POST',
+                url: '/auth/google?id_token=' + googleUser.getAuthResponse(),
+                success: function() { /* success handling like a redirect to sensitive page */ },
+                error: funciton() { /* tell user something bad happened */ }
+            });
+        });
+
+        //the dom should have div with id matching what is supplied below.
+        googleAuth.render('googleSignInButton');
+    });
+});
+```
+
+And an simple example to sign out the user.
+```js
+$(document).ready(function() {
+    window.gapi.load('auth2', function() {
+        var googleAuth = window.gapi.auth2.init();
+        googleAuth.signOut();
+        //now the user is signed out of the Google client library in the browser.
+        //e.g. redirect to login page.
+    });
+});
+```
+
+### Documentation
 The GoogleIdTokenStrategy class takes a configuration object and verification
 function like so `new GoogleIdTokenStrategy(options, verify);`
 
@@ -35,60 +135,6 @@ And the `verify` function will be called with the following parameters. This is 
     - `given_name` - string.
     - `family_name` - string.
     - `locale` - string.
-
-The following shows a simple example as to how to use the strategy. All that needs
-to be done in the client code is implement the finding and returning the user
-with the given information in profile.
-
-```node
-var _ = require('underscore');
-
-var GoogleIdTokenStrategy = require('passport-google-idtoken');
-var passport = require('passport');
-
-var LoginController = new function() {
-    this.strategy = null;
-}
-
-LoginController.prototype.loginGoogle = function(req, res) {
-    //The req must have a req.body or req.query field with the name as that
-    //supplied to new GoogleIdTokenStrategy.
-    //default is 'id_token'.
-
-    this.useGoogleStrategy(req);
-    return passport.authenticate('google-idtoken')(req, res, _.bind(function(error) {
-        if (error) {
-            //error handling.
-            return;
-        }
-        //success handling.
-    }, this));
-}
-
-LoginController.prototype.useGoogleStrategy = function(req) {
-    if (!this.strategy) {
-        this.strategy = new GoogleIdTokenStrategy(
-            {}, //use the defaults.
-            _.bind(this.validateGoogleProfileForUser, this)
-        );
-    }
-    passport.use(this.strategy);
-}
-
-LoginController.prototype.validateGoogleProfileForUser = function(profile, callback) {
-    //validate profile.aud.
-    //validate profile.hd if it is there and you want to.
-
-    //find the user with profile.email.
-    //var user = find the user somehow.
-
-    //if could not find user, then callback('could not find user error');
-
-    //otherwise callback(null, user);
-}
-
-module.exports = LoginController;
-```
 
 #### Other Information
 The Google endpoint's documentation can be seen here:
