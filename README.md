@@ -81,7 +81,7 @@ $(document).ready(function() {
 
             $.ajax({
                 type: 'POST',
-                url: '/auth/google?id_token=' + googleUser.getAuthResponse(),
+                url: '/auth/google?id_token=' + googleUser.getAuthResponse().id_token,
                 success: function() { /* success handling like a redirect to sensitive page */ },
                 error: funciton() { /* tell user something bad happened */ }
             });
@@ -93,7 +93,7 @@ $(document).ready(function() {
 });
 ```
 
-And an simple example to sign out the user.
+And a simple example to sign out the user.
 ```js
 $(document).ready(function() {
     window.gapi.load('auth2', function() {

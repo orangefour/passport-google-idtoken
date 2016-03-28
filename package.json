@@ -1,6 +1,6 @@
 {
   "name": "passport-google-idtoken",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Passport Strategy that uses a Google id_token and validates against Google's tokeninfo endpoint.",
   "main": "index.js",
   "scripts": {
