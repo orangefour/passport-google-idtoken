@@ -40,7 +40,7 @@ The following shows a simple example as to how to use the strategy. All that nee
 to be done in the client code is implement the finding and returning the user
 with the given information in profile.
 
-```nodejs
+```node
 var _ = require('underscore');
 
 var GoogleIdTokenStrategy = require('passport-google-idtoken');
