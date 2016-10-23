@@ -120,8 +120,8 @@ GoogleIdTokenStrategy.prototype.validateIdToken = function(idToken, callback, po
         } catch (e) {
             return callback('Could not parse response: ' + body);
         }
-        if (!(profile.exp && profile.email)) {
-            return callback('profile.exp and profile.email must be defined in token info response');
+        if (!profile.exp) {
+            return callback('profile.exp must be defined in token info response');
         }
         if ((new Date()).getTime() > profile.exp) {
             return callback('Token is expired');
