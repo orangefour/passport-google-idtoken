@@ -8,7 +8,7 @@ describe('GoogleIdTokenStrategy', function() {
     describe('#constructor', function() {
         it('should set name', function() {
             var s = new GoogleIdTokenStrategy();
-            assert.strictEqual(s.name, 'google-idtoken');
+            assert.strictEqual(s.name, 'google-idtoken-orangefour');
         });
 
         it('should set fields to those given in options', function() {

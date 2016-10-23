@@ -36,7 +36,7 @@ var GoogleIdTokenStrategy = function(options, verify) {
     Strategy.call(this);
 
     //this is the name that will need to be used in client code.
-    this.name = 'google-idtoken';
+    this.name = 'google-idtoken-orangefour';
 
     options = _.extend({}, options);
     this.tokenParamName = options.tokenParamName || 'id_token';
